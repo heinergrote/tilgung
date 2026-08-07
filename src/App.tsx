@@ -75,9 +75,6 @@ const App: Component = () => {
         )}
       </main>
 
-      <footer class="max-w-6xl mx-auto px-4 sm:px-6 pb-8 text-center text-xs text-slate-400">
-        Alle Berechnungen sind unverbindlich und dienen nur zur Orientierung.
-      </footer>
     </div>
   );
 };

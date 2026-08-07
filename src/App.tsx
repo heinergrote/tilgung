@@ -1,6 +1,7 @@
 import { Component, createMemo, createSignal } from 'solid-js';
 import type { LoanParams } from './types';
 import { calculateAnnualSummaries, calculateSchedule } from './utils/amortization';
+import { loadParams, saveParams } from './utils/storage';
 import LoanForm from './components/LoanForm';
 import LoanOverview from './components/LoanOverview';
 import AnnualTable from './components/AnnualTable';
@@ -22,13 +23,22 @@ const DEFAULT_PARAMS: LoanParams = {
 };
 
 const App: Component = () => {
-  const [params, setParams] = createSignal<LoanParams>(DEFAULT_PARAMS);
+  const [params, setParams] = createSignal<LoanParams>(loadParams(DEFAULT_PARAMS));
 
   const schedule = createMemo(() => calculateSchedule(params()));
   const annualSummaries = createMemo(() => calculateAnnualSummaries(schedule()));
 
   const handleChange = (updated: Partial<LoanParams>) => {
-    setParams((prev) => ({ ...prev, ...updated }));
+    setParams((prev) => {
+      const next = { ...prev, ...updated };
+      saveParams(next);
+      return next;
+    });
+  };
+
+  const handleReset = () => {
+    saveParams(DEFAULT_PARAMS);
+    setParams(DEFAULT_PARAMS);
   };
 
   const insufficientPayment = () => {
@@ -60,7 +70,7 @@ const App: Component = () => {
         <PrintHeader params={params()} />
 
         <div class="print:hidden">
-          <LoanForm params={params()} onChange={handleChange} />
+          <LoanForm params={params()} onChange={handleChange} onReset={handleReset} />
         </div>
 
         {insufficientPayment() ? (

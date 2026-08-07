@@ -4,6 +4,7 @@ import type { LoanParams } from '../types';
 interface Props {
   params: LoanParams;
   onChange: (updated: Partial<LoanParams>) => void;
+  onReset: () => void;
 }
 
 const MONTHS = [
@@ -27,7 +28,16 @@ const YEARS = Array.from({ length: 10 }, (_, i) => currentYear + i);
 const LoanForm: Component<Props> = (props) => {
   return (
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-      <h2 class="text-lg font-semibold text-slate-800 mb-5">Darlehensparameter</h2>
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-lg font-semibold text-slate-800">Darlehensparameter</h2>
+        <button
+          onClick={props.onReset}
+          class="text-xs text-slate-400 hover:text-slate-600 border border-slate-200 hover:border-slate-300 rounded-lg px-3 py-1.5 transition-colors"
+          title="Standardwerte wiederherstellen"
+        >
+          Zurücksetzen
+        </button>
+      </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
         {/* Loan amount */}

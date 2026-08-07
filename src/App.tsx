@@ -5,6 +5,7 @@ import LoanForm from './components/LoanForm';
 import LoanOverview from './components/LoanOverview';
 import AnnualTable from './components/AnnualTable';
 import MonthlyTable from './components/MonthlyTable';
+import PrintHeader from './components/PrintHeader';
 
 const nextMonth = (() => {
   const d = new Date();
@@ -39,7 +40,7 @@ const App: Component = () => {
   return (
     <div class="min-h-screen bg-slate-100">
       {/* Header */}
-      <header class="bg-white border-b border-slate-200 shadow-sm">
+      <header class="bg-white border-b border-slate-200 shadow-sm print:hidden">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-3">
           <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
             <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -54,9 +55,13 @@ const App: Component = () => {
       </header>
 
       {/* Main content */}
-      <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-6">
+      <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 print:p-0 print:max-w-none flex flex-col gap-6">
 
-        <LoanForm params={params()} onChange={handleChange} />
+        <PrintHeader params={params()} />
+
+        <div class="print:hidden">
+          <LoanForm params={params()} onChange={handleChange} />
+        </div>
 
         {insufficientPayment() ? (
           <div class="bg-red-50 border border-red-200 rounded-2xl px-6 py-4 text-red-700 text-sm font-medium">
@@ -70,7 +75,9 @@ const App: Component = () => {
           <>
             <LoanOverview schedule={schedule()} />
             <AnnualTable summaries={annualSummaries()} />
-            <MonthlyTable schedule={schedule()} />
+            <div class="print:break-before-page">
+              <MonthlyTable schedule={schedule()} />
+            </div>
           </>
         )}
       </main>

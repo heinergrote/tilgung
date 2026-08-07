@@ -9,7 +9,9 @@ interface Props {
 const MonthlyTable: Component<Props> = (props) => {
   const [expanded, setExpanded] = createSignal(false);
 
-  const displayed = () => expanded() ? props.schedule : props.schedule.slice(0, 24);
+  // On print, always show all rows regardless of expanded state
+  const displayed = () => props.schedule;
+  const isHiddenOnScreen = (i: number) => !expanded() && i >= 24;
   const hasMore = () => props.schedule.length > 24;
 
   return (
@@ -33,7 +35,7 @@ const MonthlyTable: Component<Props> = (props) => {
           <tbody>
             <For each={displayed()}>
               {(row, i) => (
-                <tr class={`border-t border-slate-100 hover:bg-blue-50/40 transition-colors ${i() % 2 === 0 ? '' : 'bg-slate-50/40'}`}>
+                <tr class={`border-t border-slate-100 hover:bg-blue-50/40 transition-colors ${i() % 2 === 0 ? '' : 'bg-slate-50/40'} ${isHiddenOnScreen(i()) ? 'hidden print:table-row' : ''}`}>
                   <td class={`${tdClass} font-medium text-slate-700 whitespace-nowrap`}>
                     {monthName(row.month)} {row.year}
                   </td>
@@ -49,7 +51,7 @@ const MonthlyTable: Component<Props> = (props) => {
         </table>
       </div>
       {hasMore() && (
-        <div class="px-6 py-4 border-t border-slate-100 text-center">
+        <div class="px-6 py-4 border-t border-slate-100 text-center print:hidden">
           <button
             onClick={() => setExpanded((v) => !v)}
             class="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
